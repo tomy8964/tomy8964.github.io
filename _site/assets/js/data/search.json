@@ -1,0 +1,123 @@
+[
+  
+  {
+    "title": "Spring 스프링 입문 - 7. AOP",
+    "url": "/posts/Spring-%EC%8A%A4%ED%94%84%EB%A7%81-%EC%9E%85%EB%AC%B8-7.-AOP/",
+    "categories": "Spring, 스프링 입문",
+    "tags": "Spring, spring 입문, 스프링 웹 개발, 스프링 기초",
+    "date": "2023-10-24 09:00:00 +0900",
+    
+
+
+
+
+
+    
+    "snippet": "AOPAOP가 필요한 상황  모든 메서드의 호출 시간을 측정하고 싶다면?  공통 관심 사항(cross-cutting concern) vs 핵심 관심 사항(core concern)  회원 가입 시간, 회원 조회 시간을 측정하고 싶다면?모든 메서드에 시간 측정 로직 넣었을 때 문제  회원가입, 회원 조회에 시간을 측정하는 기능은 핵심 관심 사항이 아니다....",
+    "content": "AOPAOP가 필요한 상황  모든 메서드의 호출 시간을 측정하고 싶다면?  공통 관심 사항(cross-cutting concern) vs 핵심 관심 사항(core concern)  회원 가입 시간, 회원 조회 시간을 측정하고 싶다면?모든 메서드에 시간 측정 로직 넣었을 때 문제  회원가입, 회원 조회에 시간을 측정하는 기능은 핵심 관심 사항이 아니다.  시간을 측정하는 로직은 공통 관심 사항이다.  시간을 측정하는 로직과 핵심 비즈니스의 로직이 섞여서 유지보수가 어렵다.  시간을 측정하는 로직을 별도의 공통 로직으로 만들기 매우 어렵다.  시간을 측정하는 로직을 변경할 때 모든 로직을 찾아가면서 변경해야 한다.AOP 적용  AOP: Aspect Oriented Programming  공통 관심 사항(cross-cutting concern) vs 핵심 관심 사항(core concern) 분리@Component@Aspectpublic class TimeTraceAop {    @Around(\"execution(* hello.hellospring..*(..))\")    public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {        long start = System.currentTimeMillis();        System.out.println(\"START: \" + joinPoint.toString());        try {            return joinPoint.proceed();        } finally {            long finish = System.currentTimeMillis();            long timeMs = finish - start;            System.out.println(\"END: \" + joinPoint.toString()+ \" \" + timeMs + \"ms\");        }    }}  회원가입, 회원 조회등 핵심 관심사항과 시간을 측정하는 공통 관심 사항을 분리한다.  시간을 측정하는 로직을 별도의 공통 로직으로 만들었다.  핵심 관심 사항을 깔끔하게 유지할 수 있다.  변경이 필요하면 이 로직만 변경하면 된다.  원하는 적용 대상을 선택할 수 있다.스프링의 AOP 동작 방식 설명References: 김영한 - [스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술]"
+  },
+  
+  {
+    "title": "Spring 스프링 입문 - 6. 스프링 DB 접근 기술",
+    "url": "/posts/Spring-%EC%8A%A4%ED%94%84%EB%A7%81-%EC%9E%85%EB%AC%B8-6.-%EC%8A%A4%ED%94%84%EB%A7%81-DB-%EC%A0%91%EA%B7%BC-%EA%B8%B0%EC%88%A0/",
+    "categories": "Spring, 스프링 입문",
+    "tags": "Spring, spring 입문, 스프링 웹 개발, 스프링 기초",
+    "date": "2023-10-24 09:00:00 +0900",
+    
+
+
+
+
+
+    
+    "snippet": "스프링 DB 접근 기술H2 데이터베이스 설치  개발이나 테스트 용도로 가볍고 편리한 DB, 웹 화면 제공    순수 Jdbc    Jdbc 리포지토리 구현  스프링 설정 변경    @Configurationpublic class SpringConfig {   private final DataSource dataSource;        public S...",
+    "content": "스프링 DB 접근 기술H2 데이터베이스 설치  개발이나 테스트 용도로 가볍고 편리한 DB, 웹 화면 제공    순수 Jdbc    Jdbc 리포지토리 구현  스프링 설정 변경    @Configurationpublic class SpringConfig {   private final DataSource dataSource;        public SpringConfig(DataSource dataSource) {      this.dataSource = dataSource;   }   @Bean   public MemberService memberService() {      return new MemberService(memberRepository());   }   @Bean   public MemberRepository memberRepository() {   // return new MemoryMemberRepository();      return new JdbcMemberRepository(dataSource);   }}        private final DataSource dataSource;  DataSource는 데이터베이스 커넥션을 획득할때 사용하는 객체다. 스프링 부트는 데이터베이스 커넥션 정보를 바탕으로 DataSource를 생성하고 스프링빈으로 만들어둔다. 그래서 DI를 받을 수 있다.  개방-폐쇠 원칙(OCP, Open-Closed Principle)          확장에는 열려있고, 수정, 변경에는 닫혀있다.        스프링의 DI(Dependency Injection)을 사용하면 기존 코드를 전혀 손대지 않고, 설정만으로 구현 클래스를 변경할 수 있다.스프링 통합 테스트  스프링 컨테이너와 DB까지 연결한 통합 테스트를 진행    @SpringBootTest@Transactionalclass MemberServiceIntegrationTest {@AutowiredMemberService memberService;@AutowiredMemberRepository memberRepository;@Testpublic void 회원가입() throws Exception {  //Given  Member member = new Member();  member.setName(\"hello\");  //When  Long saveId = memberService.join(member);  //Then  Member findMember = memberRepository.findById(saveId).get();  assertEquals(member.getName(), findMember.getName());}@Testpublic void 중복_회원_예외() throws Exception {  //Given  Member member1 = new Member();  member1.setName(\"spring\");  Member member2 = new Member();  member2.setName(\"spring\");  //When  memberService.join(member1);  IllegalStateException e = assertThrows(IllegalStateException.class,          () -&gt; memberService.join(member2));//예외가 발생해야 한다.  assertThat(e.getMessage()).isEqualTo(\"이미 존재하는 회원입니다.\");}}        @SpringBootTest: 스프링 컨테이너와 테스트를 함께 실행한다.  @Transactional: 테스트 케이스에 이 애노테이션이 있으면, 테스트 시작 전에 트랜잭션을 시작하고, 테스트 완료 후에 항상 롤백한다. 이렇게 하면 DB에 데이터가 남지 않으므로 다음 테스트에 영향을 주지 않는다.스프링 JdbcTemplate  순수 Jdbc와 동일한 환경설정을 하면 된다.  스프링 JdbcTemplate과 MyBatis 같은 라이브러리는 JDBC API에서 본 반복 코드를 대부분제거해준다. 하지만 SQL은 직접 작성해야 한다    public class JdbcTemplateMemberRepository implements MemberRepository {  private final JdbcTemplate jdbcTemplate;  public JdbcTemplateMemberRepository(DataSource dataSource) {      jdbcTemplate = new JdbcTemplate(dataSource);  }  @Override  public Member save(Member member) {      SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);      jdbcInsert.withTableName(\"member\").usingGeneratedKeyColumns(\"id\");      Map&lt;String, Object&gt; parameters = new HashMap&lt;&gt;();      parameters.put(\"name\", member.getName());      Number key = jdbcInsert.executeAndReturnKey(new      MapSqlParameterSource(parameters));      member.setId(key.longValue());      return member;  }  @Override  public Optional&lt;Member&gt; findById(Long id) {      List&lt;Member&gt; result = jdbcTemplate.query(\"select * from member where id = ?\", memberRowMapper(), id);      return result.stream().findAny();  }  @Override  public List&lt;Member&gt; findAll() {      return jdbcTemplate.query(\"select * from member\", memberRowMapper());  }  @Override  public Optional&lt;Member&gt; findByName(String name) {      List&lt;Member&gt; result = jdbcTemplate.query(\"select * from member where name = ?\", memberRowMapper(), name);      return result.stream().findAny();  }  private RowMapper&lt;Member&gt; memberRowMapper() {      return (rs, rowNum) -&gt; {          Member member = new Member();          member.setId(rs.getLong(\"id\"));          member.setName(rs.getString(\"name\"));          return member;      };  }}        JPA    JPA는 기존의 반복 코드는 물론이고, 기본적인 SQL도 JPA가 직접 만들어서 실행해준다.  JPA를 사용하면, SQL과 데이터 중심의 설계에서 객체 중심의 설계로 패러다임을 전환을 할 수 있다.  JPA를 사용하면 개발 생산성을 크게 높일 수 있다.JPA 엔티티 매핑@Entitypublic class Member {    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)    private Long id;    private String name;    public Long getId() {        return id;    }    public void setId(Long id) {        this.id = id;    }    public String getName() {        return name;    }    public void setName(String name) {        this.name = name;    }}JPA 회원 리포지토리public class JpaMemberRepository implements MemberRepository {    private final EntityManager em;    public JpaMemberRepository(EntityManager em) {        this.em = em;    }    public Member save(Member member) {        em.persist(member);        return member;    }    public Optional&lt;Member&gt; findById(Long id) {        Member member = em.find(Member.class, id);        return Optional.ofNullable(member);    }    public List&lt;Member&gt; findAll() {        return em.createQuery(\"select m from Member m\", Member.class)                 .getResultList();    }    public Optional&lt;Member&gt; findByName(String name) {        List&lt;Member&gt; result = em.createQuery(\"select m from Member m where m.name = :name\", Member.class)                                .setParameter(\"name\", name)                                .getResultList();        return result.stream().findAny();    }}  JPA를 통한 모든 데이터 변경은 트랜잭션 안에서 실행해야 한다.    스프링 데이터 JPA    스프링 부트와 JPA만 사용해도 개발 생산성이 정말 많이 증가하고, 개발해야할 코드도 확연히 줄어든다.  여기에 스프링 데이터 JPA를 사용하면, 기존의 한계를 넘어 마치 마법처럼, 리포지토리에 구현 클래스 없이 인터페이스 만으로 개발을 완료할 수 있습니다. 그리고 반복 개발해온 기본 CRUD 기능도 스프링 데이터 JPA가 모두 제공한다.  스프링 부트와 JPA라는 기반 위에, 스프링 데이터 JPA라는 환상적인 프레임워크를 더하면 개발이 정말 즐거워진다.  지금까지 조금이라도 단순하고 반복이라 생각했던 개발 코드들이 확연하게 줄어든다.  따라서 개발자는 핵심 비즈니스 로직을 개발하는데, 집중할 수 있다.  실무에서 관계형 데이터베이스를 사용한다면 스프링 데이터 JPA는 이제 선택이 아니라 필수이다.      스프링 데이터 JPA 회원 리포지토리    public interface SpringDataJpaMemberRepository extends JpaRepository&lt;Member, Long&gt;, MemberRepository {Optional&lt;Member&gt; findByName(String name);}        스프링 데이터 JPA가 SpringDataJpaMemberRepository 를 스프링 빈으로 자동 등록해준다    스프링 데이터 JPA 제공 클래스      스프링 데이터 JPA 제공 기능  인터페이스를 통한 기본적인 CRUD  findByName(),findByEmail()처럼 메서드 이름 만으로 조회 기능 제공  페이징 기능 자동 제공  참고: 실무에서는 JPA와 스프링 데이터 JPA를 기본으로 사용하고, 복잡한 동적 쿼리는 Querydsl이라는  라이브러리를 사용하면 된다. Querydsl을 사용하면 쿼리도 자바 코드로 안전하게 작성할 수 있고, 동적  쿼리도 편리하게 작성할 수 있다. 이 조합으로 해결하기 어려운 쿼리는 JPA가 제공하는 네이티브 쿼리를  사용하거나, 앞서 학습한 스프링 JdbcTemplate를 사용하면 된다.References: 김영한 - [스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술]"
+  },
+  
+  {
+    "title": "Spring 스프링 입문 - 5. 회원 관리 예제 - 웹 MVC 개발",
+    "url": "/posts/Spring-%EC%8A%A4%ED%94%84%EB%A7%81-%EC%9E%85%EB%AC%B8-5.-%ED%9A%8C%EC%9B%90-%EA%B4%80%EB%A6%AC-%EC%98%88%EC%A0%9C-%EC%9B%B9-MVC-%EA%B0%9C%EB%B0%9C/",
+    "categories": "Spring, 스프링 입문",
+    "tags": "Spring, spring 입문, 스프링 웹 개발, 스프링 기초",
+    "date": "2023-10-24 09:00:00 +0900",
+    
+
+
+
+
+
+    
+    "snippet": "회원 관리 예제 - 웹 MVC 개발회원 웹 기능 - 홈 화면 추가@Controllerpublic class HomeController {     @GetMapping(\"/\")     public String home() {        return \"home\";     }}&lt;!DOCTYPE HTML&gt;&lt;html xmlns:th=\"http...",
+    "content": "회원 관리 예제 - 웹 MVC 개발회원 웹 기능 - 홈 화면 추가@Controllerpublic class HomeController {     @GetMapping(\"/\")     public String home() {        return \"home\";     }}&lt;!DOCTYPE HTML&gt;&lt;html xmlns:th=\"http://www.thymeleaf.org\"&gt;    &lt;body&gt;        &lt;div class=\"container\"&gt;             &lt;div&gt;                &lt;h1&gt;Hello Spring&lt;/h1&gt;                &lt;p&gt;회원 기능&lt;/p&gt;                &lt;p&gt;                    &lt;a href=\"/members/new\"&gt;회원 가입&lt;/a&gt;                    &lt;a href=\"/members\"&gt;회원 목록&lt;/a&gt;                &lt;/p&gt;             &lt;/div&gt;        &lt;/div&gt; &lt;!-- /container --&gt;    &lt;/body&gt;&lt;/html&gt;  참고: 컨트롤러가 정적 파일보다 우선순위가 높다.    회원 웹 기능 - 등록    회원 등록 폼 개발  @Controllerpublic class MemberController {     private final MemberService memberService;          @Autowired     public MemberController(MemberService memberService) {        this.memberService = memberService;     }          @GetMapping(value = \"/members/new\")     public String createForm() {        return \"members/createMemberForm\";     }}&lt;!DOCTYPE HTML&gt;&lt;html xmlns:th=\"http://www.thymeleaf.org\"&gt;&lt;body&gt;    &lt;div class=\"container\"&gt;     &lt;form action=\"/members/new\" method=\"post\"&gt;         &lt;div class=\"form-group\"&gt;             &lt;label for=\"name\"&gt;이름&lt;/label&gt;             &lt;input type=\"text\" id=\"name\" name=\"name\" placeholder=\"이름을 입력하세요\"&gt;         &lt;/div&gt;     &lt;button type=\"submit\"&gt;등록&lt;/button&gt;     &lt;/form&gt;    &lt;/div&gt; &lt;!-- /container --&gt;&lt;/body&gt;&lt;/html&gt;회원 컨트롤러에서 회원을 실제 등록하는 기능@PostMapping(value = \"/members/new\")public String create(MemberForm form){        Member member=new Member();        member.setName(form.getName());        memberService.join(member);        return\"redirect:/\";        }회원 웹 기능 - 조회References: 김영한 - [스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술]"
+  },
+  
+  {
+    "title": "Spring 스프링 입문 - 4. 스프링 빈과 의존관계",
+    "url": "/posts/Spring-%EC%8A%A4%ED%94%84%EB%A7%81-%EC%9E%85%EB%AC%B8-4.-%EC%8A%A4%ED%94%84%EB%A7%81-%EB%B9%88%EA%B3%BC-%EC%9D%98%EC%A1%B4%EA%B4%80%EA%B3%84/",
+    "categories": "Spring, 스프링 입문",
+    "tags": "Spring, spring 입문, 스프링 웹 개발, 스프링 기초",
+    "date": "2023-10-24 09:00:00 +0900",
+    
+
+
+
+
+
+    
+    "snippet": "스프링 빈과 의존관계컴포넌트 스캔과 자동 의존관계 설정회원 컨트롤러가 회원 서비스와 회원 리포지토리를 사용할 수 있게 의존관계를 준비하자.@Controllerpublic class MemberController {     private final MemberService memberService;          @Autowired     public...",
+    "content": "스프링 빈과 의존관계컴포넌트 스캔과 자동 의존관계 설정회원 컨트롤러가 회원 서비스와 회원 리포지토리를 사용할 수 있게 의존관계를 준비하자.@Controllerpublic class MemberController {     private final MemberService memberService;          @Autowired     public MemberController(MemberService memberService) {         this.memberService = memberService;     }}  생성자에 @Autowired가 있으면 스프링이 연관된 객체를 스프링 컨테이너에서 찾아서 넣어준다. 이렇게 객체 의존관계를 외부에서 넣어주는 것을 DI(Dependency Injection), 의존성 주입이라 한다.스프링 빈을 등록하는 2가지 방법  컴포넌트 스캔과 자동 의존관계 설정  자바 코드로 직접 스프링 빈 등록하기컴포넌트 스캔 원리  @Component 애노테이션이 있으면 스프링 빈으로 자동 등록된다.  @Controller 컨트롤러가 스프링 빈으로 자동 등록된 이유도 컴포넌트 스캔 때문이다.  @Component를 포함하는 다음 애노테이션도 스프링 빈으로 자동 등록된다.          @Controller      @Service      @Repository      회원 서비스 스프링 빈 등록@Servicepublic class MemberService {     private final MemberRepository memberRepository;          @Autowired     public MemberService(MemberRepository memberRepository) {        this.memberRepository = memberRepository;     }}      참고: 생성자에 @Autowired 를 사용하면 객체 생성 시점에 스프링 컨테이너에서 해당 스프링 빈을 찾아서주입한다. 생성자가 1개만 있으면 @Autowired 는 생략할 수 있다        참고: 스프링은 스프링 컨테이너에 스프링 빈을 등록할 때, 기본으로 싱글톤으로 등록한다(유일하게 하나만 등록해서 공유한다) 따라서 같은 스프링 빈이면 모두 같은 인스턴스다. 설정으로 싱글톤이 아니게 설정할 수 있지만, 특별한 경우를 제외하면 대부분 싱글톤을 사용한다.  자바 코드로 직접 스프링 빈 등록하기@Configurationpublic class SpringConfig {     @Bean     public MemberService memberService() {        return new MemberService(memberRepository());     }     @Bean     public MemberRepository memberRepository() {        return new MemoryMemberRepository();     }}  참고: XML로 설정하는 방식도 있지만 최근에는 잘 사용하지 않으므로 생략한다.  참고: DI에는 필드 주입, setter 주입, 생성자 주입 이렇게 3가지 방법이 있다. 의존관계가 실행중에동적으로 변하는 경우는 거의 없으므로 생성자 주입을 권장한다.      참고: 실무에서는 주로 정형화된 컨트롤러, 서비스, 리포지토리 같은 코드는 컴포넌트 스캔을 사용한다.그리고 정형화 되지 않거나, 상황에 따라 구현 클래스를 변경해야 하면 설정을 통해 스프링 빈으로등록한다.    주의: @Autowired 를 통한 DI는 helloController , memberService 등과 같이 스프링이 관리하는객체에서만 동작한다. 스프링 빈으로 등록하지 않고 내가 직접 생성한 객체에서는 동작하지 않는다.References: 김영한 - [스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술]"
+  },
+  
+  {
+    "title": "Spring 스프링 입문 - 3. 회원 관리 예제 - 백엔드 개발",
+    "url": "/posts/Spring-%EC%8A%A4%ED%94%84%EB%A7%81-%EC%9E%85%EB%AC%B8-3.-%ED%9A%8C%EC%9B%90-%EA%B4%80%EB%A6%AC-%EC%98%88%EC%A0%9C-%EB%B0%B1%EC%97%94%EB%93%9C-%EA%B0%9C%EB%B0%9C/",
+    "categories": "Spring, 스프링 입문",
+    "tags": "Spring, spring 입문, 스프링 웹 개발, 스프링 기초",
+    "date": "2023-10-24 09:00:00 +0900",
+    
+
+
+
+
+
+    
+    "snippet": "회원 관리 예제 - 백엔드 개발비즈니스 요구사항 정리  데이터: 회원ID, 이름  기능: 회원 등록, 조회  아직 데이터 저장소가 선정되지 않음(가상의 시나리오)  컨트롤러: 웹 MVC의 컨트롤러 역할  서비스: 핵심 비즈니스 로직 구현  리포지토리: 데이터베이스에 접근, 도메인 객체를 DB에 저장하고 관리  도메인: 비즈니스 도메인 객체, 예) 회원...",
+    "content": "회원 관리 예제 - 백엔드 개발비즈니스 요구사항 정리  데이터: 회원ID, 이름  기능: 회원 등록, 조회  아직 데이터 저장소가 선정되지 않음(가상의 시나리오)  컨트롤러: 웹 MVC의 컨트롤러 역할  서비스: 핵심 비즈니스 로직 구현  리포지토리: 데이터베이스에 접근, 도메인 객체를 DB에 저장하고 관리  도메인: 비즈니스 도메인 객체, 예) 회원, 주문, 쿠폰 등등 주로 데이터베이스에 저장하고 관리됨  아직 데이터 저장소가 선정되지 않아서, 우선 인터페이스로 구현 클래스를 변경할 수 있도록 설계  데이터 저장소는 RDB, NoSQL 등등 다양한 저장소를 고민중인 상황으로 가정  개발을 진행하기 위해서 초기 개발 단계에서는 구현체로 가벼운 메모리 기반의 데이터 저장소 사용회원 리포지토리 테스트 케이스 작성  자바는 JUnit이라는 프레임워크로 테스트를실행해서 준비하고 실행하는데 오래 걸리고, 반복 실행하기어렵고 여러 테스트를 한번에 실행하기 어려운 문제를 해결한다.  @AfterEach 한번에 여러 테스트를 실행하면 메모리 DB에 직전 테스트의 결과가 남을 수 있다. 이렇게 되면 이전 테스트 때문에 다음 테스트가 실패할 가능성이 있다.  @Aftereach를 사용하면 각 테스트가 종료될 때 마다 이 기능을 실행한다. 여기서는 메모리 DB에 저장된 데이터를 삭제한다.  테스트트 각각 독립적으로 실행되어야 한다. 테스트 순서에 의존관계가 있는 것은 좋은 테스트가 아니다.    class MemoryMemberRepositoryTest {  MemoryMemberRepository repository = new MemoryMemberRepository();    @AfterEach  public void afterEach() {    repository.clearStore();  }}      회원 서비스 테스트  기존에는 회원 서비스가 메모리 회원 리포지토리를 직접 생성하게 했다.  회원 리포지토리의 코드가 회원 서비스 코드를 DI 가능하게 변경한다.    public class MemberService { private final MemberRepository memberRepository;     public MemberService(MemberRepository memberRepository) {     this.memberRepository = memberRepository; } ...}        회원 서비스 테스트    class MemberServiceTest {   MemberService memberService;   MemoryMemberRepository memberRepository;        @BeforeEach   public void beforeEach() {      memberRepository = new MemoryMemberRepository();      memberService = new MemberService(memberRepository);   }        @AfterEach   public void afterEach() {      memberRepository.clearStore();   }        @Test   ...        @BeforeEach: 각 테스트 실행 전에 호출된다. 테스트가 서로 영향이 없도록 항상 새로운 객체를 생성하고, 의존관계도 새로 맺어준다.References: 김영한 - [스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술]"
+  },
+  
+  {
+    "title": "Spring 스프링 입문 - 2. 스프링 웹 개발 기초",
+    "url": "/posts/Spring-%EC%8A%A4%ED%94%84%EB%A7%81-%EC%9E%85%EB%AC%B8-2.-%EC%8A%A4%ED%94%84%EB%A7%81-%EC%9B%B9-%EA%B0%9C%EB%B0%9C-%EA%B8%B0%EC%B4%88/",
+    "categories": "Spring, 스프링 입문",
+    "tags": "Spring, spring 입문, 스프링 웹 개발, 스프링 기초",
+    "date": "2023-10-24 09:00:00 +0900",
+    
+
+
+
+
+
+    
+    "snippet": "스프링 웹 개발 기초정적 컨텐츠resources/static/hello-static.html&lt;!DOCTYPE HTML&gt;&lt;html&gt;&lt;head&gt; &lt;title&gt;static content&lt;/title&gt; &lt;meta http-equiv=\"Content-Type\" content=\"text/html; cha...",
+    "content": "스프링 웹 개발 기초정적 컨텐츠resources/static/hello-static.html&lt;!DOCTYPE HTML&gt;&lt;html&gt;&lt;head&gt; &lt;title&gt;static content&lt;/title&gt; &lt;meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /&gt;&lt;/head&gt;&lt;body&gt;정적 컨텐츠 입니다.&lt;/body&gt;&lt;/html&gt;      실행: http://localhost:8080/hello-static.html        주소 값과 관련있는 컨트롤러가 없으면 resources의 static 폴더에서 화면을 자동으로 찾아준다.  MVC와 템플릿 엔진  MVC: Model, View, ControllerController@Controllerpublic class HelloController {     @GetMapping(\"hello-mvc\")     public String helloMvc(@RequestParam(\"name\") String name, Model model) {        model.addAttribute(\"name\", name);        return \"hello-template\";     }}Viewresources/templates/hello-template.html&lt;html xmlns:th=\"http://www.thymeleaf.org\"&gt;&lt;body&gt;&lt;p th:text=\"'hello ' + ${name}\"&gt;hello! empty&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;  실행: http://localhost:8080/hello-mvc?name=spring  주소 값 뒤의 ? 뒤에 있는 name=spring은 name이라는 param에 value가 spring인 { key : value } 형식으로 넘어온다.  이것을 Controller에서 @RequestParam(\"name\")으로 name이라는 param을 String name으로 받는다.  name을 model.addAttribute(\"name\", name)을 통해 모델에 넣고 뷰에 넘긴다.  View에서는 ${name}이라는 Thymeleaf 문법을 통해 받은 모델에서 name을 사용한다.API@ResponseBody 문자 변환@Controllerpublic class HelloController {     @GetMapping(\"hello-string\")     @ResponseBody     public String helloString(@RequestParam(\"name\") String name) {         return \"hello \" + name;     }}  @ResponseBody 를 사용하면 뷰 리졸버( viewResolver )를 사용하지 않음  대신에 HTTP의 BODY에 문자 내용을 직접 반환(HTML BODY TAG를 말하는 것이 아님)@ResponseBody 객체 반환@Controllerpublic class HelloController {   @GetMapping(\"hello-api\")   @ResponseBody   public Hello helloApi(@RequestParam(\"name\") String name) {        Hello hello = new Hello();        hello.setName(name);        return hello;   }   static class Hello {        private String name;       public String getName() {           return name;       }       public void setName(String name) {           this.name = name;       }   }}  @ResponseBody 를 사용하고, 객체를 반환하면 객체가 JSON으로 변환됨@ResponseBody 사용 원리  @ResponseBody를 사용          HTTP의 BODY에 문자 내용을 직접 반환              viewResolver 대신에 HttpMessageConverter 가 동작            기본 문자처리: StringHttpMessageConverter      기본 객체처리: MappingJackson2HttpMessageConverter      byte 처리 등등 기타 여러 HttpMessageConverter가 기본으로 등록되어 있음        참고: 클라이언트의 HTTP Accept 해더와 서버의 컨트롤러 반환 타입 정보 둘을 조합해서 HttpMessageConverter 가 선택된다.References: 김영한 - [스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술]"
+  },
+  
+  {
+    "title": "Spring 스프링 입문 - 1. 프로젝트 환경설정",
+    "url": "/posts/Spring-%EC%8A%A4%ED%94%84%EB%A7%81-%EC%9E%85%EB%AC%B8-1.-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%99%98%EA%B2%BD%EC%84%A4%EC%A0%95/",
+    "categories": "Spring, 스프링 입문",
+    "tags": "Spring, spring 입문, spring 프로젝트, spring 프로젝트 환경설정",
+    "date": "2023-10-24 09:00:00 +0900",
+    
+
+
+
+
+
+    
+    "snippet": "프로젝트 환경설정View 환경설정  Welcome Page 만들기  static/index.html을 올려두면 Spring boot가 자동으로 Welcome Page 기능을 제공한다.resources/static/index.html  &lt;!DOCTYPE HTML&gt;  &lt;html&gt;  &lt;head&gt;   &lt;title&gt;H...",
+    "content": "프로젝트 환경설정View 환경설정  Welcome Page 만들기  static/index.html을 올려두면 Spring boot가 자동으로 Welcome Page 기능을 제공한다.resources/static/index.html  &lt;!DOCTYPE HTML&gt;  &lt;html&gt;  &lt;head&gt;   &lt;title&gt;Hello&lt;/title&gt;   &lt;meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /&gt;  &lt;/head&gt;  &lt;body&gt;  Hello  &lt;a href=\"/hello\"&gt;hello&lt;/a&gt;  &lt;/body&gt;  &lt;/html&gt;resources/templates/hello.html&lt;!DOCTYPE HTML&gt;&lt;html xmlns:th=\"http://www.thymeleaf.org\"&gt;&lt;head&gt; &lt;title&gt;Hello&lt;/title&gt; &lt;meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /&gt;&lt;/head&gt;&lt;body&gt;&lt;p th:text=\"'안녕하세요. ' + ${data}\" &gt;안녕하세요. 손님&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;@Controllerpublic class HelloController {    @GetMapping(\"hello\")    public String hello(Model model){        model.addAttribute(\"data\",\"hello!!\");        return \"hello\";    }}  실행: http://localhost:8080/hello  컨트롤러에서 @GetMapping(“hello”)를 통해 주소 값 뒤인 hello를 매핑하여 hello 메서드를 실행한다.  컨트롤러에서 리턴 값으로 문자를 반환하면 뷰 리졸버( viewResolver)가 template에서 화면을 찾아서 처리한다.          스프링 부트 템플릿엔진 기본 viewName 매핑      resources:templates/ +{ViewName}+ .html      References: 김영한 - [스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술]"
+  }
+  
+]
+
