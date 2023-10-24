@@ -23,10 +23,10 @@ order: 4
 ## 📫 How to reach me: **tomy8964@naver.com**
 
 ## 🌱 I’m currently learning      
-<img src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white">   
-<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white">     
-<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">     
-<img src="https://img.shields.io/badge/IntelliJ IDEA-000000?style=for-the-badge&logo=IntelliJ IDEA&logoColor=white">    
+<img alt="img" src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white">   
+<img alt="img" src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white">     
+<img alt="img" src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">     
+<img alt="img" src="https://img.shields.io/badge/IntelliJ IDEA-000000?style=for-the-badge&logo=IntelliJ IDEA&logoColor=white">    
 
 <!--
 **tomy8964/tomy8964** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
