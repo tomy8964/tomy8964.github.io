@@ -1,7 +1,7 @@
 ---
 title: 스프링 부트와 JPA - 스프링 부트와 JPA 활용2 - API 개발과 성능 최적화
 date: YYYY-MM-DD HH:MM:SS +09:00
-categories: [Spring boot & JPA, 스프링 부트와 JPA 활용2]
+categories: [강의 Spring  boot & JPA, 스프링 부트와 JPA 활용2]
 tags:
   [
     Spring Boot,

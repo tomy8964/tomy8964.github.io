@@ -116,7 +116,7 @@ make to_redpanda
 make to_minio
 ```
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled.png)
+![Untitled](/assets/img/2023-10-40/Untitled.png)
 
 ## **Prepare MySQL data source**
 
@@ -127,9 +127,9 @@ make to_minio
 - 다음으로 `make up` 명령어를 실행하여 MySQL 서비스를 빌드하고 `make` `to_mysql` 명령어를 실행하여 MySQL에 접속한 후 아래와 같이 명령어를 실행
 한다.
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%201.png)
+![Untitled](/assets/img/2023-10-40/Untitled%201.png)
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%202.png)
+![Untitled](/assets/img/2023-10-40/Untitled%202.png)
 
 # 데이서 생성 Scripts
 
@@ -184,7 +184,7 @@ make to_data_generator
 
 ## **Generation scripts**
 
-```powershell
+``` 
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
@@ -194,19 +194,19 @@ python src/01_generate_orders.py
 💡 ERROR:
 
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%203.png)
+![Untitled](/assets/img/2023-10-40/Untitled%203.png)
 
 
 * 패키지가 시스템 전체 Python에 이미 설치되어 있으면 가상 환경에 다시 설치되지 않고 요구 사항이 이미 충족되었음을 알리는 메시지가 표시됩니다.
 
 * 이를 해결하기 위해 `pip install` 명령을 실행할 때 `--ignore-installed` 플래그를 사용하였습니다. 이 플래그는 시스템 전체 Python에 이미 패키지가 설치되어 있어도 pip가 패키지를 다시 설치하도록 강제합니다.
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%204.png)
+![Untitled](/assets/img/2023-10-40/Untitled%204.png)
 
 
 * `01_generated_orders.py` 파일의 MySQL HOST 정보를 수정한다.
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%205.png)
+![Untitled](/assets/img/2023-10-40/Untitled%205.png)
 
 ```docker
 (74254, 9)
@@ -219,11 +219,11 @@ Writing data on: 2017-08-03
 -Records: 148
 ```
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%206.png)
+![Untitled](/assets/img/2023-10-40/Untitled%206.png)
 
 ## We return to MySQL to check the generated data
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%207.png)
+![Untitled](/assets/img/2023-10-40/Untitled%207.png)
 
 # Ingestion layer : Redpanda
 
@@ -269,7 +269,7 @@ redpanda:
 
 - make down && make up으로 서비스를 다시 시작한다. 성공하면 [http://localhost:8080/topics](http://localhost:8080/topics) 에 접속하면 아래와 같은 redpanda console 인터페이스가 표시됩니다.
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%208.png)
+![Untitled](/assets/img/2023-10-40/Untitled%208.png)
 
 # Ingestion layer : Kafka connect
 
@@ -353,15 +353,15 @@ curl --request POST \
 
 요청이 성공하면 Redpanda 콘솔로 돌아가면 디비지움 관련 토픽 이 자동으로 생성된 것을 확인할 수 있다.
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%209.png)
+![Untitled](/assets/img/2023-10-40/Untitled%209.png)
 
 `dbserver1.brazilian_ecommerce.olist_orders_dataset` 항목을 확인하면 CDC 메시지의 전체 내용을 볼 수 있다.
 
 - 수집된 콘텐츠를 기반으로 데이터베이스 PostgreSQL, 데이터 웨어하우스 Redshift 또는 데이터 레이크하우스와 같은 다양한 대상 싱크에 복제할 수 있다.
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%2010.png)
+![Untitled](/assets/img/2023-10-40/Untitled%2010.png)
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%2011.png)
+![Untitled](/assets/img/2023-10-40/Untitled%2011.png)
 
 # Target sink: MinIO
 
@@ -410,7 +410,7 @@ MINIO_SECRET_KEY="minio123"
 
 - After make down && make up. We access **[http://localhost:9001/buckets](http://localhost:9001/buckets)** and we will see the interface presented as shown below
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%2012.png)
+![Untitled](/assets/img/2023-10-40/Untitled%2012.png)
 
 # Target sink : Sink CDC
 
@@ -445,11 +445,11 @@ curl --request POST \
 }'
 ```
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%2013.png)
+![Untitled](/assets/img/2023-10-40/Untitled%2013.png)
 
 - Check the information on the Redpanda console, we will see a new consumer group is created
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%2014.png)
+![Untitled](/assets/img/2023-10-40/Untitled%2014.png)
 
 - When the data synchronization is complete, we will see the synced files in MinIO
 
@@ -459,13 +459,13 @@ curl --request POST \
 
 We do the same by accessing the data_generator container via make to_data_generator. Then use python to run the script 02_generate_clickstream.py when successful we will see the log as below
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%2015.png)
+![Untitled](/assets/img/2023-10-40/Untitled%2015.png)
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%2016.png)
+![Untitled](/assets/img/2023-10-40/Untitled%2016.png)
 
 At this point, when checking with the Redpanda console, we will see that a topic has clickstream_events been created, along with events captured on the system.
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%2017.png)
+![Untitled](/assets/img/2023-10-40/Untitled%2017.png)
 
 Finally, to sink data about MinIO, register a connector on Kafka connect by requesting as below
 
@@ -498,7 +498,7 @@ curl --request POST \
 
 Yes, finally clickstream data has been synced to MinIO
 
-![Untitled](Stream%20data%20ingestion%20with%20Redpanda%20d0cb567739634076bc2e1aa5a554efe9/Untitled%2018.png)
+![Untitled](/assets/img/2023-10-40/Untitled%2018.png)
 
 # 결론
 

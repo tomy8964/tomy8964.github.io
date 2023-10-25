@@ -1,7 +1,7 @@
 ---
 title: 스프링 부트와 JPA - Querydsl
 date: YYYY-MM-DD HH:MM:SS +09:00
-categories: [Spring boot & JPA, Querydsl]
+categories: [강의 Spring  boot & JPA, Querydsl]
 tags:
   [
     Spring Boot,
