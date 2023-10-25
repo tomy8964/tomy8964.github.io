@@ -70,7 +70,7 @@ theme_mode: # [light|dark]
 # will be added to all image (site avatar & posts' images) paths starting with '/'
 #
 # e.g. 'https://cdn.com'
-img_cdn: "https://chirpy-img.netlify.app"
+img_cdn: "https://tomy8964.github.io"
 
 # the avatar on sidebar, support local or CORS resources
 avatar: "https://github.com/tomy8964/CodingTestExercise/assets/103511161/784bd9fb-9738-4f11-966b-5a768d5d86be"
@@ -85,7 +85,7 @@ paginate: 5
 paginate_path: "/page:num/"
 
 # The base URL of your site
-baseurl: ""
+baseurl: '/'
 
 # ------------ The following options are not recommended to be modified ------------------
 
