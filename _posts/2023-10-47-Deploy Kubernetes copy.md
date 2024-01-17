@@ -1,4 +1,4 @@
----
+[---
 title: Deploy - Kubernetes
 date: YYYY-MM-DD HH:MM:SS +09:00
 categories: [백엔드, k8s]
@@ -178,4 +178,4 @@ $ minikube delete
 
 > 무중단 배포를 위해 쿠버네티스를 로컬 및 클라우드 환경에서 적용해봅니다.
 
-클라우드 환경 사용시 무료 비용 한계를 꼭 확인해야 합니다.
+클라우드 환경 사용시 무료 비용 한계를 꼭 확인해야 합니다.]()
